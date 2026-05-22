@@ -4,39 +4,5 @@ server:
 spring:
   application:
     name: api-gateway
-<<<<<<< Updated upstream
   config:
-    import: optional:configserver:http://config-server:8888
-=======
->>>>>>> Stashed changes
-  cloud:
-    config:
-      enabled: false
-    gateway:
-      routes:
-        - id: orders-service
-          uri: lb://orders-service
-          predicates:
-            - Path=/api/orders/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: ordersCircuitBreaker
-                fallbackUri: forward:/fallback/orders
-
-<<<<<<< Updated upstream
-eureka:
-  client:
-    service-url:
-      defaultZone: http://registry-server:8761/eureka/
-=======
-resilience4j:
-  circuitbreaker:
-    instances:
-      ordersCircuitBreaker:
-        slidingWindowType: COUNT_BASED
-        slidingWindowSize: 5
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10000ms
-        permittedNumberOfCallsInHalfOpenState: 3
->>>>>>> Stashed changes
+    import: "optional:configserver:http://localhost:8888"
