@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # 1. Base de Datos
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      - MYSQL_DATABASE=orders_db_dev
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    # ESTO REVISA QUE MYSQL ESTÉ LISTO REALMENTE
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+
+  # 2. Servidor de Configuración
+  config-server:
+    build: ./config-server
+    container_name: config-server
+    ports:
+      - "8888:8888"
+
+  # 3. Eureka (Registro de servicios)
+  registry-server:
+    build: ./registry-server
+    container_name: registry-server
+    ports:
+      - "8761:8761"
+    depends_on:
+      - config-server
+
+  # 4. Microservicio de Pedidos
+  orders-service:
+    build: ./orders-service
+    container_name: orders-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      registry-server:
+        condition: service_started
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/orders_db_dev?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
+      - SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_LOB_NON_CONTEXTUAL_CREATION=true
+
+  # 5. API Gateway
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - registry-server
+      - config-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888

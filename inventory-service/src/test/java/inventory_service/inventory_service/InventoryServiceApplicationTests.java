@@ -1,10 +1,10 @@
-package com.delivery.config_server;
+package inventory_service.inventory_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ConfigServerApplicationTests {
+class InventoryServiceApplicationTests {
 
 	@Test
 	void contextLoads() {

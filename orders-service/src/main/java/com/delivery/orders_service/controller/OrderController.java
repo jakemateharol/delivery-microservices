@@ -3,6 +3,8 @@ package com.delivery.orders_service.controller;
 import com.delivery.orders_service.model.Order;
 import com.delivery.orders_service.service.OrderService;
 import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -12,6 +14,11 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+
+
+    @Value("${server.port}")   
+    private String port;
+
 
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
@@ -47,7 +54,7 @@ public class OrderController {
 
     @GetMapping("/instance-info")
     public String instanceInfo() {
-        return "orders-service activo en puerto: " +
-               System.getProperty("server.port", "8081");
+        return "orders-service activo en puerto: " + port;
+               
     }
 }
