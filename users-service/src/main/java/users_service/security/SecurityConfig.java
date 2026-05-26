@@ -24,7 +24,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Desactivamos CSRF ya que usaremos JWT
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/users/**").permitAll() // Por ahora permitimos libre acceso para probar registro/login
+                .requestMatchers("/api/users/**","/api/users/**").permitAll() // Por ahora permitimos libre acceso para probar registro/login
                 .anyRequest().authenticated()
             );
         
