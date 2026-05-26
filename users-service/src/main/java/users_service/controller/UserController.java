@@ -1,41 +1,54 @@
 package users_service.controller;
 
-
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import users_service.dto.RegisterRequestDTO;
 import users_service.dto.LoginRequestDTO;
+import users_service.dto.AuthResponseDTO;
+import users_service.service.AuthService;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/users") // <-- Aquí le ponemos el v1 para que coincida con tu SecurityConfig
+@RequestMapping("/api/v1/users")
 public class UserController {
 
-    // NOTA: Aquí más adelante inyectaremos tu UserService con la lógica real de MySQL y JWT.
-    // Por ahora, creamos este código "espejo" para verificar que Postman y la API Gateway conecten bien.
+    @Autowired
+    private AuthService authService; // <-- Inyectamos tu servicio real
 
     @PostMapping
     public ResponseEntity<?> registrarUsuario(@RequestBody RegisterRequestDTO registroDTO) {
-        // Simulamos que guardamos el usuario con éxito
-        Map<String, Object> response = new HashMap<>();
-        response.put("mensaje", "¡Usuario registrado con éxito en el sistema!");
-        response.put("username", registroDTO.getUsername());
-        response.put("rolesAsignados", registroDTO.getRoles());
-        
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        try {
+            // Llamamos a tu lógica real de registro
+            String mensaje = authService.registerUser(registroDTO);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("mensaje", mensaje);
+            response.put("username", registroDTO.getUsername());
+            
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            // Si el usuario o email ya existen, atrapará el error aquí
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUsuario(@RequestBody LoginRequestDTO loginDTO) {
-        // Simulamos que el login es correcto y devolvemos un Token JWT falso de prueba
-        Map<String, Object> response = new HashMap<>();
-        response.put("mensaje", "¡Inicio de sesión simula exitoso!");
-        response.put("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.FakeTokenForTestingOnly...");
-        
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        try {
+            // Llamamos a tu lógica real de login que genera el JWT
+            AuthResponseDTO authResponse = authService.loginUser(loginDTO);
+            return new ResponseEntity<>(authResponse, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            // Si la contraseña o usuario están mal, saltará aquí
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        }
     }
 }
