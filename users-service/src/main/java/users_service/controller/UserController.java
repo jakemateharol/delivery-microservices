@@ -1,14 +1,14 @@
-package users_service.users_service.controller;
+package users_service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import users_service.users_service.dto.AuthResponseDTO;
-import users_service.users_service.dto.LoginRequestDTO;
-import users_service.users_service.dto.RegisterRequestDTO;
-import users_service.users_service.service.AuthService;
+import users_service.dto.AuthResponseDTO;
+import users_service.dto.LoginRequestDTO;
+import users_service.dto.RegisterRequestDTO;
+import users_service.service.AuthService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,5 +51,16 @@ public class UserController {
             errorResponse.put("error", e.getMessage());
             return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
         }
+    }
+
+
+    @GetMapping("/profile")
+     public ResponseEntity<?> profile() {
+
+     Map<String, Object> response = new HashMap<>();
+
+      response.put("mensaje", "Ruta protegida OK");
+
+     return ResponseEntity.ok(response);
     }
 }

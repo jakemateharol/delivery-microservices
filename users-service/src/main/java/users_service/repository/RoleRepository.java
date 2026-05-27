@@ -1,10 +1,10 @@
-package users_service.users_service.repository;
+package users_service.repository;
 
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import users_service.users_service.entity.Role;
+import users_service.entity.Role;
 
 import java.util.Optional;
 

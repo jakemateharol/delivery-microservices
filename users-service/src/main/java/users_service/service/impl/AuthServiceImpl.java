@@ -1,16 +1,16 @@
-package users_service.users_service.service.impl;
+package users_service.service.impl;
 
 
 
-import users_service.users_service.dto.AuthResponseDTO;
-import users_service.users_service.dto.LoginRequestDTO;
-import users_service.users_service.dto.RegisterRequestDTO;
-import users_service.users_service.entity.Role;
-import users_service.users_service.entity.User;
-import users_service.users_service.repository.RoleRepository;
-import users_service.users_service.repository.UserRepository;
-import users_service.users_service.security.JwtUtils;
-import users_service.users_service.service.AuthService;
+import users_service.dto.AuthResponseDTO;
+import users_service.dto.LoginRequestDTO;
+import users_service.dto.RegisterRequestDTO;
+import users_service.entity.Role;
+import users_service.entity.User;
+import users_service.repository.RoleRepository;
+import users_service.repository.UserRepository;
+import users_service.security.JwtUtils;
+import users_service.service.AuthService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

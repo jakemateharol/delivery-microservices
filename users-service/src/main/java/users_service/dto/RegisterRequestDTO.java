@@ -1,4 +1,4 @@
-package users_service.users_service.dto;
+package users_service.dto;
 
 
 

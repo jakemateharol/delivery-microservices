@@ -1,9 +1,9 @@
-package users_service.users_service.security;
+package users_service.security;
 
 
 
-import users_service.users_service.entity.Role;
-import users_service.users_service.repository.RoleRepository;
+import users_service.entity.Role;
+import users_service.repository.RoleRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

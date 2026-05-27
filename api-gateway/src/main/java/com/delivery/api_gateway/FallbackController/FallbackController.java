@@ -1,4 +1,4 @@
-package com.delivery.FallbackController;
+package com.delivery.api_gateway.FallbackController;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

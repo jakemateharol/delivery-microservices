@@ -1,8 +1,4 @@
-package com.SecurityConfig;
-
-
-
-
+package com.delivery.api_gateway.SecurityConfig;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +12,10 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
 
         return http
-                .csrf(ServerHttpSecurity.CsrfSpec::disable) // 🔥 ESTO QUITA EL 403
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/api/users/**").permitAll()
                         .anyExchange().permitAll()
                 )
                 .build();

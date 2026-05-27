@@ -1,4 +1,4 @@
-package users_service.users_service.entity;
+package users_service.entity;
 
 
 
