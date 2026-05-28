@@ -8,4 +8,5 @@ public interface DishService {
     List<Dish> obtenerCatalogo();
     Dish obtenerPlatoPorId(Long id);
     Dish actualizarStock(Long id, Integer nuevoStock);
+    Dish descontarStock(Long id, Integer cantidad);
 }

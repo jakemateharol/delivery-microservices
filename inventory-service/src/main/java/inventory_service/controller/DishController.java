@@ -37,15 +37,16 @@ public class DishController {
     }
 
     // 3. Actualizar el stock de un plato (Para cuando se vayan vendiendo)
-    @PutMapping("/{id}/stock")
-    public ResponseEntity<?> actualizarStock(@PathVariable Long id, @RequestParam Integer stock) {
+    // 4. Descontar stock automáticamente al hacer un pedido
+    @PutMapping("/{id}/descontar")
+    public ResponseEntity<?> descontarStock(@PathVariable Long id, @RequestParam Integer cantidad) {
         try {
-            Dish dishActualizado = dishService.actualizarStock(id, stock);
+            Dish dishActualizado = dishService.descontarStock(id, cantidad);
             return ResponseEntity.ok(dishActualizado);
         } catch (Exception e) {
             Map<String, Object> error = new HashMap<>();
             error.put("error", e.getMessage());
-            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
     }
 }

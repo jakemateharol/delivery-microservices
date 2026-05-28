@@ -38,4 +38,29 @@ public class DishServiceImpl implements DishService {
         dish.setStock(nuevoStock);
         return dishRepository.save(dish);
     }
+    @Override
+public Dish descontarStock(Long id, Integer cantidad) {
+    Dish dish = obtenerPlatoPorId(id);
+
+    // 1. Validar si hay suficiente stock disponible
+    if (dish.getStock() < cantidad) {
+        throw new RuntimeException("Stock insuficiente para el plato '" + dish.getName() + "'. Stock actual: " + dish.getStock());
+    }
+
+    // 2. Restar el stock
+    int nuevoStock = dish.getStock() - cantidad;
+    dish.setStock(nuevoStock);
+
+    // 3. LÓGICA AUTOMÁTICA: Si llega a 0, se pasa a agotado (active = false)
+    if (nuevoStock == 0) {
+        dish.setActive(false);
+        System.out.println("🚨 ALERTA ADMINISTRADOR: El plato '" + dish.getName() + "' se ha AGOTADO por completo.");
+    } 
+    // 4. LÓGICA AUTOMÁTICA: Alerta de stock mínimo (ejemplo: 3 unidades o menos)
+    else if (nuevoStock <= 3) {
+        System.out.println("⚠️ ADVERTENCIA ADMINISTRADOR: El plato '" + dish.getName() + "' tiene stock crítico. Solo quedan " + nuevoStock + " unidades.");
+    }
+
+    return dishRepository.save(dish);
+}
 }
