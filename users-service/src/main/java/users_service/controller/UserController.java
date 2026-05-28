@@ -56,13 +56,26 @@ public class UserController {
 
 
     @GetMapping("/profile")
-    @PreAuthorize("hasRole('CLIENTE')")
-     public ResponseEntity<?> profile() {
+    @PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN') or hasRole('REPARTIDOR')") // Ahora permitimos que cualquiera vea su propio perfil
+    public ResponseEntity<?> profile() {
+        try {
+            // 1. Sacamos el usuario que está actualmente autenticado en el sistema gracias al Token
+            org.springframework.security.core.Authentication authentication = 
+                    org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+            
+            String currentPrincipalName = authentication.getName();
 
-     Map<String, Object> response = new HashMap<>();
+            // 2. Preparamos la respuesta que va a leer tu Frontend para pintar la pantalla
+            Map<String, Object> response = new HashMap<>();
+            response.put("username", currentPrincipalName);
+            response.put("roles", authentication.getAuthorities());
+            response.put("estado", "Conectado de forma segura");
 
-      response.put("mensaje", "Ruta protegida OK");
-
-     return ResponseEntity.ok(response);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "No se pudo cargar el perfil: " + e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
