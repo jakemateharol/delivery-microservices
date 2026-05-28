@@ -78,4 +78,24 @@ public class UserController {
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/repartidores")
+    @PreAuthorize("hasRole('ADMIN')") // <-- ¡Solo el dueño del restaurante puede ver esta lista!
+    public ResponseEntity<?> listarRepartidores() {
+        try {
+            // 1. Traemos absolutamente todos los usuarios de la base de datos
+            java.util.List<users_service.entity.User> todosLosUsuarios = authService.obtenerTodosLosUsuarios(); 
+            
+            // 2. Filtramos con Java para quedarnos SÓLO con los que tengan el rol de REPARTIDOR
+            java.util.List<users_service.entity.User> repartidores = todosLosUsuarios.stream()
+                .filter(u -> u.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_REPARTIDOR")))
+                .collect(java.util.stream.Collectors.toList());
+
+            return ResponseEntity.ok(repartidores);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "No se pudo obtener la lista: " + e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

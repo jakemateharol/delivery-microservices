@@ -94,4 +94,9 @@ public class AuthServiceImpl implements AuthService {
 
         return new AuthResponseDTO(token, user.getUsername());
     }
+    // ¡AÑADE ESTE MÉTODO AL FINAL DE LA CLASE!
+    @Override
+    public java.util.List<User> obtenerTodosLosUsuarios() {
+        return userRepository.findAll(); // JpaRepository ya hace todo el trabajo por ti
+    }
 }
