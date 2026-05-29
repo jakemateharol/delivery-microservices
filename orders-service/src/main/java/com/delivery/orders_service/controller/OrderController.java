@@ -3,8 +3,6 @@ package com.delivery.orders_service.controller;
 import com.delivery.orders_service.model.Order;
 import com.delivery.orders_service.service.OrderService;
 import jakarta.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -14,11 +12,6 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-
-
-    @Value("${server.port}")   
-    private String port;
-
 
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
@@ -41,20 +34,15 @@ public class OrderController {
         return orderService.save(order);
     }
 
-    @PutMapping("/{id}")
-    public Order update(@PathVariable Long id, @Valid @RequestBody Order order) {
-        return orderService.update(id, order);
+    // Endpoint clave para que el Admin o el Repartidor cambien el estado (Ej: /api/orders/1/status?nuevoEstado=EN_RUTA)
+    @PutMapping("/{id}/status")
+    public Order updateStatus(@PathVariable Long id, @RequestParam String nuevoEstado) {
+        return orderService.cambiarEstado(id, nuevoEstado);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        orderService.delete(id);
+        orderService.cancelarOrden(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/instance-info")
-    public String instanceInfo() {
-        return "orders-service activo en puerto: " + port;
-               
     }
 }

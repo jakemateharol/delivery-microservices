@@ -32,10 +32,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = tokenProvider.getUsernameFromJWT(token);
             String role = tokenProvider.getRoleFromJWT(token); // Ej: "ROLE_ADMIN" o "ADMIN"
 
-            // Asegurarnos de que el rol empiece con ROLE_ para que Spring Security lo entienda
-            if (role != null && !role.startsWith("ROLE_")) {
-                role = "ROLE_" + role;
-            }
+
+            
+           
 
             List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
 
@@ -43,6 +42,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     new UsernamePasswordAuthenticationToken(username, null, authorities);
             
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+            // Busca donde pusiste: SecurityContextHolder.getContext().setAuthentication(authentication);
+// Y justo abajo pega esto:
+
+            System.out.println("====== DEBUG INVENTARIO ======");
+            System.out.println("Usuario autenticado: " + username);
+            System.out.println("Rol asignado a Spring: " + authorities.toString());
+            System.out.println("==============================");
         }
 
         filterChain.doFilter(request, response);

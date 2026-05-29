@@ -1,9 +1,5 @@
 package users_service.security;
 
-
-
-
-
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
@@ -25,10 +21,12 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateJwtToken(String username) {
+    // 🔥 MODIFICADO: Ahora recibe el username Y el role
+    public String generateJwtToken(String username, String role) {
 
         return Jwts.builder()
                 .subject(username)
+                .claim("roles", role) // 🎯 ¡La línea mágica que faltaba para el inventario!
                 .issuedAt(new Date())
                 .expiration(new Date((new Date()).getTime() + JWT_EXPIRATION_MS))
                 .signWith(getSigningKey())
@@ -37,15 +35,12 @@ public class JwtUtils {
 
     // VALIDAR TOKEN
     public boolean validateJwtToken(String token) {
-
         try {
             Jwts.parser()
                     .verifyWith((javax.crypto.SecretKey) getSigningKey())
                     .build()
                     .parseSignedClaims(token);
-
             return true;
-
         } catch (JwtException e) {
             return false;
         }
@@ -53,7 +48,6 @@ public class JwtUtils {
 
     // OBTENER USERNAME
     public String getUsernameFromJwtToken(String token) {
-
         return Jwts.parser()
                 .verifyWith((javax.crypto.SecretKey) getSigningKey())
                 .build()
@@ -61,6 +55,4 @@ public class JwtUtils {
                 .getPayload()
                 .getSubject();
     }
-
-    
 }

@@ -11,18 +11,14 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class JwtTokenProvider {
 
-    // Pon exactamente la misma clave secreta de tu users-service
-    private final String jwtSecret = "TuClaveSecretaSuperLargaYSeguraQueTieneQueTenerMasDeTreintaYDosCaracteres123456";
+    private final String jwtSecret = "MiClaveSecretaSuperSeguraYMuyLargaParaElDelivery2026";
 
     private SecretKey getSigningKey() {
-    byte[] keyBytes = this.jwtSecret.getBytes(StandardCharsets.UTF_8);
-    return Keys.hmacShaKeyFor(keyBytes); // <-- Este es el método correcto
-}
-    
-    // Si en usuarios usaste hmacShaKeyFor, cámbialo por:
-    // return Keys.hmacShaKeyFor(keyBytes);
+        byte[] keyBytes = this.jwtSecret.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
-    // 1. Validar que el token sea correcto y no haya expirado
+    // 2. VALIDAR TOKEN (Versión compatible con setSigningKey)
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -31,28 +27,28 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token);
             return true;
         } catch (Exception ex) {
+            System.out.println("🚨 ERROR VALIDACIÓN JWT: " + ex.getMessage());
             return false;
         }
     }
 
-    // 2. Extraer el nombre de usuario del token
+    // 3. EXTRAER USERNAME
     public String getUsernameFromJWT(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody();
+                .getBody(); // En versiones anteriores se usa getBody() en vez de getPayload()
         return claims.getSubject();
     }
 
-    // 3. Extraer el rol del token (recuerda que lo guardamos como un String o Lista)
+    // 4. EXTRAER ROL
     public String getRoleFromJWT(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        // Jalamos el campo "roles" que inyectamos en el JWT de usuarios
         return claims.get("roles", String.class); 
     }
 }

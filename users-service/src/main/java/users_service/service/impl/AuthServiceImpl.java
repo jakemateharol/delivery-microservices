@@ -89,8 +89,15 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Error: Usuario o contraseña incorrectos.");
         }
 
-        // 3. Generar el Token JWT si todo está bien
-        String token = jwtUtils.generateJwtToken(user.getUsername());
+        // 3. 🔥 EXTRAER EL ROL DEL USUARIO Y GENERAR EL TOKEN CON ÉL
+        // Obtenemos el nombre del primer rol que tenga el usuario (ej: "ROLE_ADMIN" o "ROLE_CLIENTE")
+        String userRole = user.getRoles().stream()
+                .map(role -> role.getName()) // O .getRoleName() según como se llame el atributo en tu entidad Role
+                .findFirst()
+                .orElse("ROLE_CLIENTE"); // Por seguridad, si no tiene asignado nada
+
+        // Ahora sí, le pasamos el username Y el rol al método modificado
+        String token = jwtUtils.generateJwtToken(user.getUsername(), userRole);
 
         return new AuthResponseDTO(token, user.getUsername());
     }

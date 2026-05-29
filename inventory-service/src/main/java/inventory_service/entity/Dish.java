@@ -1,31 +1,43 @@
 package inventory_service.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import java.math.BigDecimal;
+import jakarta.validation.constraints.*; // 🎯 Importante para las validaciones
+import lombok.*;
 
 @Entity
 @Table(name = "dishes")
-@Data // Genera getters, setters, toString, etc. automáticamente
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Dish {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @NotBlank(message = "El nombre del plato no puede estar vacío")
+    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
+    @Column(nullable = false, length = 100)
     private String name;
 
+    @NotBlank(message = "La descripción no puede estar vacía")
+    @Column(nullable = false, length = 255)
     private String description;
 
+    @NotNull(message = "El precio es obligatorio")
+    @Positive(message = "El precio debe ser un número positivo mayor a 0") // 🛑 No precios negativos ni cero
     @Column(nullable = false)
-    private BigDecimal price;
+    private Double price;
 
+    @NotNull(message = "El stock es obligatorio")
+    @Min(value = 0, message = "El stock no puede ser menor a cero") // 🛑 No stock negativo
     @Column(nullable = false)
     private Integer stock;
 
-    @Column(nullable = false)
-    private String category; // Ej: 'Entradas', 'Segundos', 'Bebidas'
+    @NotBlank(message = "La categoría es obligatoria")
+    @Column(nullable = false, length = 50)
+    private String category;
 
-    private Boolean active = true; // Para "ocultar" platos sin borrarlos de las órdenes viejas
+    private boolean active = true; // Por defecto inicia activo
 }
