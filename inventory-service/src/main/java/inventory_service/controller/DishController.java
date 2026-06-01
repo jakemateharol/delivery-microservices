@@ -41,9 +41,12 @@ public class DishController {
 
     // 3. Actualizar el stock de un plato (Para cuando se vayan vendiendo)
     // 4. Descontar stock automáticamente al hacer un pedido
-    @PutMapping("/{id}/descontar")
-    public ResponseEntity<?> descontarStock(@PathVariable Long id, @RequestParam Integer cantidad) {
+    // 4. Descontar stock automáticamente al hacer un pedido (Ruta corregida para Feign)
+    @PutMapping("/descontar-stock")
+    @jakarta.annotation.security.PermitAll // 🛡️ Asegura pase libre total
+    public ResponseEntity<?> descontarStock(@RequestParam("id") Long id, @RequestParam("cantidad") Integer cantidad) {
         try {
+            // Pasamos las variables limpias al servicio
             Dish dishActualizado = dishService.descontarStock(id, cantidad);
             return ResponseEntity.ok(dishActualizado);
         } catch (Exception e) {

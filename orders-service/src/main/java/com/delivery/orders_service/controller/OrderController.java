@@ -3,9 +3,13 @@ package com.delivery.orders_service.controller;
 import com.delivery.orders_service.model.Order;
 import com.delivery.orders_service.service.OrderService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus; // 🎯 NUEVO IMPORT: Corrige el error de HttpStatus
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map; // 🎯 NUEVO IMPORT: Corrige el error de Map
 
 @RestController
 @RequestMapping("/api/orders")
@@ -44,5 +48,18 @@ public class OrderController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         orderService.cancelarOrden(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // 🎯 Esta es la ruta exacta que pusimos en el OrderClient de Pagos
+    @PutMapping("/{id}/confirmar")
+    public ResponseEntity<?> confirmarOrden(@PathVariable Long id) {
+        try {
+            Order ordenActualizada = orderService.confirmarYDescontarStock(id);
+            return ResponseEntity.ok(ordenActualizada);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
     }
 }
