@@ -1,0 +1,5 @@
+tracking_service\entity\DeliveryLocation.class
+tracking_service\repository\LocationRepository.class
+tracking_service\controller\TrackingController.class
+tracking_service\service\TrackingService.class
+tracking_service\TrackingServiceApplication.class
